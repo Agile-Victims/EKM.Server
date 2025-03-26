@@ -21,6 +21,14 @@ public class User {
     private Role role;
 
     public enum Role {
-        STUDENT, TEACHER, COACH
+        STUDENT, TEACHER, ADMIN
+    }
+
+    public User(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.role = user.getRole();
     }
 }
