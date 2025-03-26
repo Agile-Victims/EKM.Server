@@ -1,12 +1,12 @@
 package agile.victims.EKM.Server.repository;
 
-import agile.victims.EKM.Server.entity.Student;
+import agile.victims.EKM.Server.entity.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface StudentRepository extends  JpaRepository<Student, Long> {
-    Optional<Student> findByEmailAndPassword(String email, String password);
+public interface TeacherRepository extends JpaRepository<Teacher, Long> {
+    Optional<Teacher> findByEmailAndPassword(String email, String password);
 }

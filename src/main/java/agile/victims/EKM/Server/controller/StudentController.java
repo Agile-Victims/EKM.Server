@@ -1,24 +1,31 @@
 package agile.victims.EKM.Server.controller;
 
 import agile.victims.EKM.Server.entity.Student;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import agile.victims.EKM.Server.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api")
-@Tag(name = "EKM server", description = "API's For Software Engineering With Agile Class")
+@RequestMapping("/webApi/student")
 public class StudentController {
 
-    @GetMapping("/students")
-    @Operation(summary = "get all students", description = "Returns string")
-    public String getAllStudents() {
-        return "All students";
+    @Autowired
+    private StudentService studentService;
+
+    // Create a new student
+    @PostMapping
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        Student savedStudent = studentService.saveStudent(student);
+        return ResponseEntity.ok(savedStudent);
     }
 
-    @PostMapping("/students")
-    @Operation(summary = "Create a user", description = "Returns string")
-    public String createStudent(@RequestBody Student student) {
-        return "Student created";
+    // Get all students
+    @GetMapping
+    public ResponseEntity<List<Student>> getAllStudents() {
+        List<Student> students = studentService.getAllStudents();
+        return ResponseEntity.ok(students);
     }
 }

@@ -3,13 +3,17 @@ package agile.victims.EKM.Server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 
 @Entity
 @Table(name = "students")
 @Getter @Setter
-//@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+//@AllArgsConstructor
 public class Student extends User {
+
+    public Student(User user) {
+        super(user);
+    }
 
 //    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Goal> goals;
