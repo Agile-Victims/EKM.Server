@@ -7,6 +7,7 @@ import agile.victims.EKM.Server.entity.User;
 import agile.victims.EKM.Server.repository.AdminRepository;
 import agile.victims.EKM.Server.repository.StudentRepository;
 import agile.victims.EKM.Server.repository.TeacherRepository;
+import agile.victims.EKM.Server.requests.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,22 +20,22 @@ public class UserService {
     @Autowired private TeacherRepository teacherRepository;
     @Autowired private AdminRepository adminRepository;
 
-    public ResponseEntity<String> login(String userType, User user) {
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+    public ResponseEntity<String> login(String userType, LoginRequest loginRequest) {
+        if (loginRequest.getEmail() == null || loginRequest.getEmail().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is required");
         }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+        if (loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required");
         }
 
         return switch (userType.toLowerCase()) {
-            case "student" -> studentRepository.findByEmailAndPassword(user.getEmail(), user.getPassword())
+            case "student" -> studentRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
                     .map(s -> ResponseEntity.ok("Student Dashboard Access Granted"))
                     .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
-            case "teacher" -> teacherRepository.findByEmailAndPassword(user.getEmail(), user.getPassword())
+            case "teacher" -> teacherRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
                     .map(t -> ResponseEntity.ok("Teacher Dashboard Access Granted"))
                     .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
-            case "admin" -> adminRepository.findByEmailAndPassword(user.getEmail(), user.getPassword())
+            case "admin" -> adminRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
                     .map(a -> ResponseEntity.ok("Admin Dashboard Access Granted"))
                     .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
             default -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
