@@ -33,7 +33,7 @@ public class UserService {
         return null;
     }
 
-    public ResponseEntity<String> login(String userType, LoginRequest loginRequest) {
+    public ResponseEntity<?> login(String userType, LoginRequest loginRequest) {
         if (loginRequest.getEmail() == null || loginRequest.getEmail().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is required");
         }
@@ -44,14 +44,17 @@ public class UserService {
         return switch (userType.toLowerCase()) {
             case "student" -> studentRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
                     .map(s -> ResponseEntity.ok("Student Dashboard Access Granted"))
-                    .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
+                    //.orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
+                    .orElseThrow(() -> new RuntimeException("Student Login Failed"));
             case "teacher" -> teacherRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
                     .map(t -> ResponseEntity.ok("Teacher Dashboard Access Granted"))
-                    .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
+                    //.orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
+                    .orElseThrow(() -> new RuntimeException("Teacher Login Failed"));
             case "admin" -> adminRepository.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword())
                     .map(a -> ResponseEntity.ok("Admin Dashboard Access Granted"))
-                    .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
-            default -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
+                    //.orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"));
+                    .orElseThrow(() -> new RuntimeException("Admin Login Failed"));
+            default -> throw new RuntimeException("Invalid user type");
         };
     }
     public ResponseEntity<String> signup(String userType, SignUpRequest signUpRequest) {

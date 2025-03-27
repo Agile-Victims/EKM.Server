@@ -16,7 +16,11 @@ public class AuthController {
 
     @PostMapping("/login/{userType}")
     public ResponseEntity<?> login(@PathVariable("userType") String userType, @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(userService.login(userType, loginRequest));
+        try {
+            return ResponseEntity.ok(userService.login(userType, loginRequest));
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     @PostMapping("/signup/{userType}")
     public ResponseEntity<String> signup(@PathVariable("userType") String userType, @RequestBody SignUpRequest signUpRequest) {
