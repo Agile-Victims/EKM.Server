@@ -10,10 +10,13 @@ import lombok.*;
 @NoArgsConstructor
 //@AllArgsConstructor
 public class Student extends User {
-
-    public Student(User user) {
-        super(user);
+    public Student(String name, String email, String password) {
+        super(name, email, password);
     }
+
+//    public Student(User user) {
+//        super(user);
+//    }
 
 //    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Goal> goals;

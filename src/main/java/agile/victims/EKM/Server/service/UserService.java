@@ -8,6 +8,8 @@ import agile.victims.EKM.Server.repository.AdminRepository;
 import agile.victims.EKM.Server.repository.StudentRepository;
 import agile.victims.EKM.Server.repository.TeacherRepository;
 import agile.victims.EKM.Server.requests.LoginRequest;
+import agile.victims.EKM.Server.requests.SignUpRequest;
+import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,17 @@ public class UserService {
     @Autowired private StudentRepository studentRepository;
     @Autowired private TeacherRepository teacherRepository;
     @Autowired private AdminRepository adminRepository;
+
+    private Boolean ValidateDuplicateMail(String userType, String mail)
+    {
+        if (userType.equalsIgnoreCase("student"))
+            return studentRepository.findByEmail(mail).isPresent();
+        if (userType.equalsIgnoreCase("teacher"))
+            return teacherRepository.findByEmail(mail).isPresent();
+        if (userType.equalsIgnoreCase("admin"))
+            return adminRepository.findByEmail(mail).isPresent();
+        return null;
+    }
 
     public ResponseEntity<String> login(String userType, LoginRequest loginRequest) {
         if (loginRequest.getEmail() == null || loginRequest.getEmail().isEmpty()) {
@@ -41,26 +54,37 @@ public class UserService {
             default -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
         };
     }
-    public ResponseEntity<String> signup(String userType, User user) {
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+    public ResponseEntity<String> signup(String userType, SignUpRequest signUpRequest) {
+        if (signUpRequest.getEmail() == null || signUpRequest.getEmail().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is required");
         }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+        if (signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required");
+        }
+        if (signUpRequest.getName() == null || signUpRequest.getName().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name is required");
+        }
+
+        if (ValidateDuplicateMail(userType, signUpRequest.getEmail()) == null || Boolean.TRUE.equals(ValidateDuplicateMail(userType, signUpRequest.getEmail()))) {
+            return (ValidateDuplicateMail(userType,signUpRequest.getEmail()) == null) ? ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid credentials")
+                    : ResponseEntity.status(HttpStatus.CONFLICT).body("The user already exists");
         }
 
         switch (userType.toLowerCase()) {
             case "student":
-                Student student = new Student(user);
+                Student student = new Student(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getPassword());
+                student.setRole(User.Role.STUDENT);
                 // Add additional fields in the feature
                 studentRepository.save(student);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Student registered successfully");
             case "teacher":
-                Teacher teacher = new Teacher(user);
+                Teacher teacher = new Teacher(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getPassword());
+                teacher.setRole(User.Role.TEACHER);
                 teacherRepository.save(teacher);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Teacher registered successfully");
             case "admin":
-                Admin admin = new Admin(user);
+                Admin admin = new Admin(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getPassword());
+                admin.setRole(User.Role.ADMIN);
                 adminRepository.save(admin);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Admin registered successfully");
             default:
