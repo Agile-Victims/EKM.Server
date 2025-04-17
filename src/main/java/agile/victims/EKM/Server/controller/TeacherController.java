@@ -15,7 +15,7 @@ public class TeacherController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
+    @PostMapping("/signup/")
     public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest) {
         try {
             return ResponseEntity.ok(userService.signup("teacher", signUpRequest));
