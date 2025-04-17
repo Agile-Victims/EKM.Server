@@ -35,10 +35,10 @@ public class UserService {
 
     public ResponseEntity<?> login(String userType, LoginRequest loginRequest) {
         if (loginRequest.getEmail() == null || loginRequest.getEmail().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is required");
+            throw (new RuntimeException("Email is required"));
         }
         if (loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required");
+            throw (new RuntimeException("Password is required"));
         }
 
         return switch (userType.toLowerCase()) {
@@ -59,34 +59,36 @@ public class UserService {
     }
     public ResponseEntity<String> signup(String userType, SignUpRequest signUpRequest) {
         if (signUpRequest.getEmail() == null || signUpRequest.getEmail().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is required");
+            throw (new RuntimeException("Email is required"));
         }
         if (signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required");
+            throw (new RuntimeException("Password is required"));
         }
         if (signUpRequest.getName() == null || signUpRequest.getName().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name is required");
+            throw (new RuntimeException("Name is required"));
+        }
+        if (signUpRequest.getSurname() == null || signUpRequest.getSurname().isEmpty()) {
+            throw (new RuntimeException("Surname is required"));
         }
 
         if (ValidateDuplicateMail(userType, signUpRequest.getEmail()) == null || Boolean.TRUE.equals(ValidateDuplicateMail(userType, signUpRequest.getEmail()))) {
-            return (ValidateDuplicateMail(userType,signUpRequest.getEmail()) == null) ? ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid credentials")
-                    : ResponseEntity.status(HttpStatus.CONFLICT).body("The user already exists");
+            throw (new RuntimeException("Duplicate Email"));
         }
 
         switch (userType.toLowerCase()) {
             case "student":
-                Student student = new Student(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getPassword());
+                Student student = new Student(signUpRequest.getName(), signUpRequest.getSurname(), signUpRequest.getEmail(), signUpRequest.getPassword());
                 student.setRole(User.Role.STUDENT);
                 // Add additional fields in the feature
                 studentRepository.save(student);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Student registered successfully");
             case "teacher":
-                Teacher teacher = new Teacher(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getPassword());
+                Teacher teacher = new Teacher(signUpRequest.getName(), signUpRequest.getSurname(), signUpRequest.getEmail(), signUpRequest.getPassword());
                 teacher.setRole(User.Role.TEACHER);
                 teacherRepository.save(teacher);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Teacher registered successfully");
             case "admin":
-                Admin admin = new Admin(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getPassword());
+                Admin admin = new Admin(signUpRequest.getName(), signUpRequest.getSurname(), signUpRequest.getEmail(), signUpRequest.getPassword());
                 admin.setRole(User.Role.ADMIN);
                 adminRepository.save(admin);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Admin registered successfully");
