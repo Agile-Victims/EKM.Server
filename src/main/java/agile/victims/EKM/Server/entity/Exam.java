@@ -13,7 +13,14 @@ public class Exam {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    private String examName;
+    private int turkishQuestionCount;
+    private int mathQuestionCount;
+    private int scienceQuestionCount;
+    private int historyQuestionCount;
+    private int relegionQuestionCount;
+    private int foreignLanguageQuestionCount;
+    private boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "admin_id")

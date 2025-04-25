@@ -15,12 +15,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
     @Autowired private StudentRepository studentRepository;
     @Autowired private TeacherRepository teacherRepository;
     @Autowired private AdminRepository adminRepository;
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+        "^[A-Za-z0-9+_.-]+@(.+)$"
+    );
+
+    private boolean isValidEmail(String email) {
+        return EMAIL_PATTERN.matcher(email).matches();
+    }
 
     private Boolean ValidateDuplicateMail(String userType, String mail)
     {
@@ -57,10 +66,17 @@ public class UserService {
             default -> throw new RuntimeException("Invalid user type");
         };
     }
-    public ResponseEntity<String> signup(String userType, SignUpRequest signUpRequest) {
-        if (signUpRequest.getEmail() == null || signUpRequest.getEmail().isEmpty()) {
-            throw (new RuntimeException("Email is required"));
+    public ResponseEntity<?> signup(String userType, SignUpRequest signUpRequest) {
+        // Email formatı kontrolü
+        if (!isValidEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Geçersiz email formatı");
         }
+
+        // Email tekrarı kontrolü
+        if (ValidateDuplicateMail(userType, signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Bu email adresi zaten kullanılıyor");
+        }
+
         if (signUpRequest.getPassword() == null || signUpRequest.getPassword().isEmpty()) {
             throw (new RuntimeException("Password is required"));
         }
@@ -71,30 +87,25 @@ public class UserService {
             throw (new RuntimeException("Surname is required"));
         }
 
-        if (ValidateDuplicateMail(userType, signUpRequest.getEmail()) == null || Boolean.TRUE.equals(ValidateDuplicateMail(userType, signUpRequest.getEmail()))) {
-            throw (new RuntimeException("Duplicate Email"));
-        }
-
         switch (userType.toLowerCase()) {
             case "student":
                 Student student = new Student(signUpRequest.getName(), signUpRequest.getSurname(), signUpRequest.getEmail(), signUpRequest.getPassword());
                 student.setRole(User.Role.STUDENT);
                 // Add additional fields in the feature
                 studentRepository.save(student);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Student registered successfully");
+                return ResponseEntity.status(HttpStatus.CREATED).body("Öğrenci başarıyla kaydedildi");
             case "teacher":
                 Teacher teacher = new Teacher(signUpRequest.getName(), signUpRequest.getSurname(), signUpRequest.getEmail(), signUpRequest.getPassword());
                 teacher.setRole(User.Role.TEACHER);
                 teacherRepository.save(teacher);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Teacher registered successfully");
+                return ResponseEntity.status(HttpStatus.CREATED).body("Öğretmen başarıyla kaydedildi");
             case "admin":
                 Admin admin = new Admin(signUpRequest.getName(), signUpRequest.getSurname(), signUpRequest.getEmail(), signUpRequest.getPassword());
                 admin.setRole(User.Role.ADMIN);
                 adminRepository.save(admin);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Admin registered successfully");
+                return ResponseEntity.status(HttpStatus.CREATED).body("Admin başarıyla kaydedildi");
             default:
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Geçersiz kullanıcı tipi");
         }
-
     }
 }
