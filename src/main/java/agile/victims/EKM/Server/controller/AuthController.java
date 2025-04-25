@@ -23,7 +23,7 @@ public class AuthController {
         }
     }
     @PostMapping("/signup/{userType}")
-    public ResponseEntity<String> signup(@PathVariable("userType") String userType, @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<?> signup(@PathVariable("userType") String userType, @RequestBody SignUpRequest signUpRequest) {
         return userService.signup(userType, signUpRequest);
     }
 }

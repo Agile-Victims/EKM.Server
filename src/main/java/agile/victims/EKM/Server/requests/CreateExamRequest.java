@@ -13,5 +13,4 @@ public class CreateExamRequest {
     private int historyQuestionCount;
     private int relegionQuestionCount;
     private int foreignLanguageQuestionCount;
-    private boolean isActive;
 }

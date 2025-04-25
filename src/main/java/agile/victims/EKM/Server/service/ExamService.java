@@ -25,7 +25,7 @@ public class ExamService {
 
     public Exam createExam(String examName, int turkishQuestionCount, int mathQuestionCount,
                           int scienceQuestionCount, int historyQuestionCount, int relegionQuestionCount,
-                          int foreignLanguageQuestionCount, boolean isActive, Long adminId) {
+                          int foreignLanguageQuestionCount, boolean isActive) {
         Exam exam = new Exam();
         exam.setExamName(examName);
         exam.setTurkishQuestionCount(turkishQuestionCount);
@@ -37,8 +37,6 @@ public class ExamService {
         exam.setActive(isActive);
         
         Admin admin = new Admin();
-        admin.setId(adminId);
-        exam.setCreatedBy(admin);
 
         exam = examRepository.save(exam);
 

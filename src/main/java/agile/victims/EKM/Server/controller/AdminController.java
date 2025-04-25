@@ -42,7 +42,7 @@ public class AdminController {
     }
 
     @PostMapping("/exams")
-    public ResponseEntity<Exam> createExam(@RequestBody CreateExamRequest request, @RequestHeader("admin-id") Long adminId) {
+    public ResponseEntity<Exam> createExam(@RequestBody CreateExamRequest request) {
         Exam exam = examService.createExam(
                 request.getExamName(),
                 request.getTurkishQuestionCount(),
@@ -51,8 +51,7 @@ public class AdminController {
                 request.getHistoryQuestionCount(),
                 request.getRelegionQuestionCount(),
                 request.getForeignLanguageQuestionCount(),
-                request.isActive(),
-                adminId
+                true
         );
         return ResponseEntity.ok(exam);
     }

@@ -12,7 +12,6 @@ public class Exam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String examName;
     private int turkishQuestionCount;
     private int mathQuestionCount;
@@ -21,11 +20,4 @@ public class Exam {
     private int relegionQuestionCount;
     private int foreignLanguageQuestionCount;
     private boolean isActive;
-
-    @ManyToOne
-    @JoinColumn(name = "admin_id")
-    private Admin createdBy;
-
-    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
-    private List<Question> questions;
 } 
