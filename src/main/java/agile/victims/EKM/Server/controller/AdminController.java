@@ -1,7 +1,6 @@
 package agile.victims.EKM.Server.controller;
 
 import agile.victims.EKM.Server.entity.Exam;
-import agile.victims.EKM.Server.entity.StudentExam;
 import agile.victims.EKM.Server.requests.CreateExamRequest;
 import agile.victims.EKM.Server.requests.LoginRequest;
 import agile.victims.EKM.Server.requests.SignUpRequest;
@@ -62,9 +61,26 @@ public class AdminController {
         return ResponseEntity.ok(exams);
     }
 
-    @GetMapping("/exams/student/{studentId}")
-    public ResponseEntity<List<StudentExam>> getStudentExams(@PathVariable Long studentId) {
-        List<StudentExam> studentExams = examService.getStudentExams(studentId);
-        return ResponseEntity.ok(studentExams);
+   
+
+    @PutMapping("/exams/{examId}/activate")
+public ResponseEntity<Exam> activateExam(@PathVariable Long examId) {
+    try {
+        Exam updatedExam = examService.activateExam(examId);
+        return ResponseEntity.ok(updatedExam);
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().build();
     }
+}
+
+@PutMapping("/exams/{examId}/deactivate")
+public ResponseEntity<Exam> deactivateExam(@PathVariable Long examId) {
+    try {
+        Exam updatedExam = examService.deactivateExam(examId);
+        return ResponseEntity.ok(updatedExam);
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().build();
+    }
+}
+
 }
