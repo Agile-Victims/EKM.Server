@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TeacherService {
     @Autowired
@@ -36,17 +38,17 @@ public class TeacherService {
         return ResponseEntity.ok("Classes updated successfully");
     }
 
-    public ResponseEntity<?> getTeacherClasses(GetClassesRequest getClassesRequest) {
-        if (getClassesRequest.getEmail() == null || getClassesRequest.getEmail().isEmpty()) {
+    public ResponseEntity<?> getTeacher(String email) {
+        if (email == null || email.isEmpty()) {
             throw new RuntimeException("Email is required");
         }
 
-        String classes = teacherRepository.getClassByEmail(getClassesRequest.getEmail());
+        Optional<Teacher> teacher = teacherRepository.findByEmail(email);
 
-        if (classes == null) {
-            return ResponseEntity.status(404).body("Teacher with email " + getClassesRequest.getEmail() + " not found.");
+        if (teacher.isEmpty()) {
+            return ResponseEntity.status(404).body("Teacher with email " + email + " not found.");
         }
 
-        return ResponseEntity.ok(classes);
+        return ResponseEntity.ok(teacher.get());
     }
 }

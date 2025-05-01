@@ -26,7 +26,7 @@ public class TeacherController {
         }
     }
 
-    @PostMapping("/set-classes/")
+    @PutMapping("/set-classes")
     public ResponseEntity<?> setClasses(@RequestBody SetClassesRequest setClassesRequest)
     {
         try
@@ -37,15 +37,12 @@ public class TeacherController {
         }
     }
 
-    @PostMapping("/get-classes")
-    public ResponseEntity<?> getClasses(@RequestBody GetClassesRequest getClassesRequest) {
+    @GetMapping("/get-my-info/{email}")
+    public ResponseEntity<?> getMyInfo(@PathVariable String email) {
         try {
-            return teacherService.getTeacherClasses(getClassesRequest);
+            return teacherService.getTeacher(email);
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Error: " + e.getMessage());
         }
     }
-
-
-
 }

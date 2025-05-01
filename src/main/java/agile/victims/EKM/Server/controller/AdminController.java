@@ -64,23 +64,23 @@ public class AdminController {
    
 
     @PutMapping("/exams/{examId}/activate")
-public ResponseEntity<Exam> activateExam(@PathVariable Long examId) {
-    try {
-        Exam updatedExam = examService.activateExam(examId);
-        return ResponseEntity.ok(updatedExam);
-    } catch (Exception e) {
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<Exam> activateExam(@PathVariable Long examId) {
+        try {
+            Exam updatedExam = examService.activateExam(examId);
+            return ResponseEntity.ok(updatedExam);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
-}
 
-@PutMapping("/exams/{examId}/deactivate")
-public ResponseEntity<Exam> deactivateExam(@PathVariable Long examId) {
-    try {
-        Exam updatedExam = examService.deactivateExam(examId);
-        return ResponseEntity.ok(updatedExam);
-    } catch (Exception e) {
-        return ResponseEntity.badRequest().build();
+    @PutMapping("/exams/{examId}/deactivate")
+    public ResponseEntity<Exam> deactivateExam(@PathVariable Long examId) {
+        try {
+            Exam updatedExam = examService.deactivateExam(examId);
+            return ResponseEntity.ok(updatedExam);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
-}
 
 }

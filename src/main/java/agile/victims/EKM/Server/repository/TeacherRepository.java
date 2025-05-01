@@ -18,7 +18,4 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     @Transactional
     @Query("UPDATE Teacher t SET t.classes = :classes WHERE t.email = :email")
     int updateTeacherClasses(@Param("email") String email, @Param("classes") String classes);
-    @Query("SELECT t.classes FROM Teacher t WHERE t.email = :email")
-    String getClassByEmail(@Param("email") String email);
-
 }
