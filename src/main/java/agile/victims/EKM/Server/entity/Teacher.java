@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 //@AllArgsConstructor
 public class Teacher extends User {
+    private String classes;
     public Teacher(String name, String surname, String email, String password) {
         super(name, surname, email, password);
     }
