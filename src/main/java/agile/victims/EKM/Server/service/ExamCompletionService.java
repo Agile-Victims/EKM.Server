@@ -10,7 +10,9 @@ import agile.victims.EKM.Server.repository.ExamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,37 +28,42 @@ public class ExamCompletionService {
     @Autowired
     private ExamRepository examRepository;
 
-    public ExamCompletion markExamAsCompleted(Long studentId, Long examId) {
+    public ExamCompletion markExamAsCompleted(ExamCompletionDTO examCompletionForm) {
         // Öğrenci kontrolü
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Öğrenci bulunamadı: " + studentId));
+        Student student = studentRepository.findByEmail(examCompletionForm.getStudentEmail())
+                .orElseThrow(() -> new RuntimeException("Öğrenci bulunamadı: " + examCompletionForm.getStudentEmail()));
 
         // Sınav kontrolü
-        Exam exam = examRepository.findById(examId)
-                .orElseThrow(() -> new RuntimeException("Sınav bulunamadı: " + examId));
+        Exam exam = examRepository.findById(examCompletionForm.getExamId())
+                .orElseThrow(() -> new RuntimeException("Sınav bulunamadı: " + examCompletionForm.getExamId()));
 
         // Sınavın aktif olup olmadığını kontrol et
         if (!exam.isActive()) {
             throw new RuntimeException("Bu sınav şu anda aktif değil");
         }
+        
+        ExamCompletion completion = new ExamCompletion();
+        completion.setExamId(exam.getId());
+        completion.setStudentId(student.getId());
+        completion.setTurkishCorrectCount(examCompletionForm.getTurkishCorrectCount());
+        completion.setTurkishWrongCount(examCompletionForm.getTurkishWrongCount());
 
-        // Öğrencinin bu sınavı daha önce tamamlayıp tamamlamadığını kontrol et
-        ExamCompletion existingCompletion = examCompletionRepository.findByStudentIdAndExamId(studentId, examId);
-        if (existingCompletion != null && existingCompletion.isCompleted()) {
-            throw new RuntimeException("Bu öğrenci bu sınavı zaten tamamlamış");
-        }
-        
-        ExamCompletion completion;
-        if (existingCompletion == null) {
-            completion = new ExamCompletion();
-            completion.setStudentId(studentId);
-            completion.setExamId(examId);
-        } else {
-            completion = existingCompletion;
-        }
-        
-        completion.setCompleted(true);
-        completion.setCompletionDate(LocalDateTime.now());
+        completion.setMathCorrectCount(examCompletionForm.getMathCorrectCount());
+        completion.setMathWrongCount(examCompletionForm.getMathWrongCount());
+
+        completion.setScienceCorrectCount(examCompletionForm.getScienceCorrectCount());
+        completion.setScienceWrongCount(examCompletionForm.getScienceWrongCount());
+
+        completion.setHistoryCorrectCount(examCompletionForm.getHistoryCorrectCount());
+        completion.setHistoryWrongCount(examCompletionForm.getHistoryWrongCount());
+
+        completion.setReligionCorrectCount(examCompletionForm.getRelegionCorrectCount());
+        completion.setReligionWrongCount(examCompletionForm.getRelegionWrongCount());
+
+        completion.setForeignLanguageCorrectCount(examCompletionForm.getForeignLanguageCorrectCount());
+        completion.setForeignLanguageWrongCount(examCompletionForm.getForeignLanguageWrongCount());
+
+        completion.setCompletionDate(new Date());
         
         return examCompletionRepository.save(completion);
     }
@@ -77,7 +84,7 @@ public class ExamCompletionService {
         return examCompletionRepository.findByExamId(examId);
     }
 
-    public List<ExamCompletionDTO> getExamCompletionDetails(Long examId) {
+    /*public List<ExamCompletionDTO> getExamCompletionDetails(Long examId) {
         // Sınav kontrolü
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new RuntimeException("Sınav bulunamadı: " + examId));
@@ -100,5 +107,5 @@ public class ExamCompletionService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }
+    }*/
 } 

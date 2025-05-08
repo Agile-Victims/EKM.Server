@@ -5,10 +5,18 @@ import java.time.LocalDateTime;
 
 @Data
 public class ExamCompletionDTO {
-    private Long studentId;
-    private String studentName;
-    private String studentSurname;
+    private Long examId;
     private String studentEmail;
-    private LocalDateTime completionDate;
-    private String examName;
-} 
+    private int turkishCorrectCount;
+    private int mathCorrectCount;
+    private int scienceCorrectCount;
+    private int historyCorrectCount;
+    private int relegionCorrectCount;
+    private int foreignLanguageCorrectCount;
+    private int turkishWrongCount;
+    private int mathWrongCount;
+    private int scienceWrongCount;
+    private int historyWrongCount;
+    private int relegionWrongCount;
+    private int foreignLanguageWrongCount;
+}

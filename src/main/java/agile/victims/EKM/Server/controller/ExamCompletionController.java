@@ -16,17 +16,6 @@ public class ExamCompletionController {
     @Autowired
     private ExamCompletionService examCompletionService;
 
-    @PostMapping("/{studentId}/{examId}")
-    public ResponseEntity<?> markExamAsCompleted(
-            @PathVariable Long studentId,
-            @PathVariable Long examId) {
-        try {
-            ExamCompletion completion = examCompletionService.markExamAsCompleted(studentId, examId);
-            return ResponseEntity.ok(completion);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getStudentCompletions(@PathVariable Long studentId) {
@@ -48,7 +37,7 @@ public class ExamCompletionController {
         }
     }
 
-    @GetMapping("/exam/{examId}/details")
+    /*@GetMapping("/exam/{examId}/details")
     public ResponseEntity<?> getExamCompletionDetails(@PathVariable Long examId) {
         try {
             List<ExamCompletionDTO> details = examCompletionService.getExamCompletionDetails(examId);
@@ -56,5 +45,5 @@ public class ExamCompletionController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
+    }*/
 } 

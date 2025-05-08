@@ -37,6 +37,11 @@ public class ExamService {
         return examRepository.findAll();
     }
 
+    public Exam getExamById(Long id) {
+        var result = examRepository.findById(id);
+        return result.orElse(null);
+    }
+
   
     public Exam activateExam(Long examId) {
         Exam exam = examRepository.findById(examId)
