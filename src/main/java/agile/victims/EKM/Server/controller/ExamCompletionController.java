@@ -17,6 +17,8 @@ public class ExamCompletionController {
     private ExamCompletionService examCompletionService;
 
 
+
+
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getStudentCompletions(@PathVariable Long studentId) {
         try {

@@ -61,8 +61,6 @@ public class AdminController {
         return ResponseEntity.ok(exams);
     }
 
-   
-
     @PutMapping("/exams/{examId}/activate")
     public ResponseEntity<Exam> activateExam(@PathVariable Long examId) {
         try {

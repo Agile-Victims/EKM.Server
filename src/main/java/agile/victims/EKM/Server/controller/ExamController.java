@@ -19,6 +19,20 @@ public class ExamController {
     @Autowired
     private ExamService examService;
 
+    // @GetMapping("/getAllExams")  --> returns Exam[]
+    // @GetMapping("/getResults/{id}")  --> returns ExamResults[]
+    /*export class ExamResult {
+        constructor(
+                public studentId: number,
+                public studentName: string,
+                public net: number,  --> 6 dersin doğru cevaplar toplam - (6 dersin yanlış cevaplar toplamı / 4)
+                public completed: boolean  --> net 0 ise false diğer türlü true
+        ) {}
+    }*/
+
+    //examcomplitioncontroller kalmayacak
+
+
     @GetMapping("/getExamById/{id}")
     public ResponseEntity<?> getAllExams(@PathVariable Long id) {
         Exam exam = examService.getExamById(id);
