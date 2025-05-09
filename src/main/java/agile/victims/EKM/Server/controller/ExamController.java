@@ -13,40 +13,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/exam")
+@RequestMapping("/webApi/exams")
 public class ExamController {
     @Autowired
     private ExamCompletionService examCompletionService;
     @Autowired
     private ExamService examService;
 
-    // @GetMapping("/getAllExams")  --> returns Exam[]
-    // @GetMapping("/getResults/{id}")  --> returns ExamResults[]
-    /*export class ExamResult {
-        constructor(
-                public studentId: number,
-                public studentName: string,
-                public net: number,  --> 6 dersin doğru cevaplar toplam - (6 dersin yanlış cevaplar toplamı / 4)
-                public completed: boolean  --> net 0 ise false diğer türlü true
-        ) {}
-    }*/
-
-    //examcomplitioncontroller kalmayacak
 
     @GetMapping("/getResults/{id}")
     public ResponseEntity<List<ExamResult>> getExamResults(@PathVariable("id") Long examId) {
         List<ExamResult> results = examService.getExamResult(examId); // az önce yazdığın method
-
-        if (results.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content
-        }
-
-        return ResponseEntity.ok(results); // 200 OK + Liste
-    }
-
-    @GetMapping("/getResults/")
-    public ResponseEntity<List<ExamResult>> getExamResults() {
-        List<ExamResult> results = examService.getExamResult(null); // az önce yazdığın method
 
         if (results.isEmpty()) {
             return ResponseEntity.noContent().build(); // 204 No Content

@@ -57,8 +57,8 @@ public class ExamCompletionService {
         completion.setHistoryCorrectCount(examCompletionForm.getHistoryCorrectCount());
         completion.setHistoryWrongCount(examCompletionForm.getHistoryWrongCount());
 
-        completion.setReligionCorrectCount(examCompletionForm.getRelegionCorrectCount());
-        completion.setReligionWrongCount(examCompletionForm.getRelegionWrongCount());
+        completion.setReligionCorrectCount(examCompletionForm.getReligionCorrectCount());
+        completion.setReligionWrongCount(examCompletionForm.getReligionWrongCount());
 
         completion.setForeignLanguageCorrectCount(examCompletionForm.getForeignLanguageCorrectCount());
         completion.setForeignLanguageWrongCount(examCompletionForm.getForeignLanguageWrongCount());
