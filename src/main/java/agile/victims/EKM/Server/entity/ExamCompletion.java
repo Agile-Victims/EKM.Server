@@ -15,6 +15,15 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExamCompletion {
+
+//    @ManyToOne
+//    @JoinColumn(name = "exam_id")
+//    private Exam exam;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "student_id")
+//    private Student student;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
