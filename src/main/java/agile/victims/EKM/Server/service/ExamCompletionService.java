@@ -63,6 +63,14 @@ public class ExamCompletionService {
         completion.setForeignLanguageCorrectCount(examCompletionForm.getForeignLanguageCorrectCount());
         completion.setForeignLanguageWrongCount(examCompletionForm.getForeignLanguageWrongCount());
 
+        // Net değerlerini hesapla
+        completion.setTurkishNet(calculateTurkishNet(completion));
+        completion.setMathNet(calculateMathNet(completion));
+        completion.setScienceNet(calculateScienceNet(completion));
+        completion.setHistoryNet(calculateHistoryNet(completion));
+        completion.setReligionNet(calculateReligionNet(completion));
+        completion.setForeignLanguageNet(calculateForeignLanguageNet(completion));
+
         completion.setCompletionDate(new Date());
         
         return examCompletionRepository.save(completion);
@@ -82,6 +90,68 @@ public class ExamCompletionService {
             throw new RuntimeException("Sınav bulunamadı: " + examId);
         }
         return examCompletionRepository.findByExamId(examId);
+    }
+
+    public ExamCompletion getExamCompletionById(Long id) {
+        return examCompletionRepository.findById(id)
+                .orElse(null);
+    }
+
+    public double calculateTurkishNet(ExamCompletion completion) {
+        return completion.getTurkishCorrectCount() - (completion.getTurkishWrongCount() / 4.0);
+    }
+
+    public double calculateMathNet(ExamCompletion completion) {
+        return completion.getMathCorrectCount() - (completion.getMathWrongCount() / 4.0);
+    }
+
+    public double calculateScienceNet(ExamCompletion completion) {
+        return completion.getScienceCorrectCount() - (completion.getScienceWrongCount() / 4.0);
+    }
+
+    public double calculateHistoryNet(ExamCompletion completion) {
+        return completion.getHistoryCorrectCount() - (completion.getHistoryWrongCount() / 4.0);
+    }
+
+    public double calculateReligionNet(ExamCompletion completion) {
+        return completion.getReligionCorrectCount() - (completion.getReligionWrongCount() / 4.0);
+    }
+
+    public double calculateForeignLanguageNet(ExamCompletion completion) {
+        return completion.getForeignLanguageCorrectCount() - (completion.getForeignLanguageWrongCount() / 4.0);
+    }
+
+    public ExamCompletion getStudentExamNets(String email, Long examId) {
+        // Öğrenci kontrolü
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Bu email adresine sahip öğrenci bulunamadı: " + email));
+
+        // Sınav kontrolü
+        if (!examRepository.existsById(examId)) {
+            throw new RuntimeException("Bu ID'ye sahip sınav bulunamadı: " + examId);
+        }
+
+        // Öğrencinin bu sınavı tamamlayıp tamamlamadığını kontrol et
+        ExamCompletion completion = examCompletionRepository.findByStudentIdAndExamId(student.getId(), examId);
+        if (completion == null) {
+            throw new RuntimeException("Bu öğrenci bu sınavı henüz tamamlamamış.");
+        }
+
+        return completion;
+    }
+
+    public List<Long> getStudentCompletedExamIds(String email) {
+        // Öğrenci kontrolü
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Bu email adresine sahip öğrenci bulunamadı: " + email));
+
+        // Öğrencinin tamamladığı sınavları bul
+        List<ExamCompletion> completions = examCompletionRepository.findByStudentId(student.getId());
+        
+        // Sınav ID'lerini liste olarak döndür
+        return completions.stream()
+                .map(ExamCompletion::getExamId)
+                .toList();
     }
 
     /*public List<ExamCompletionDTO> getExamCompletionDetails(Long examId) {
