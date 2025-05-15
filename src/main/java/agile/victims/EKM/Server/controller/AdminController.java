@@ -39,46 +39,4 @@ public class AdminController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    @PostMapping("/exams")
-    public ResponseEntity<Exam> createExam(@RequestBody CreateExamRequest request) {
-        Exam exam = examService.createExam(
-                request.getExamName(),
-                request.getTurkishQuestionCount(),
-                request.getMathQuestionCount(),
-                request.getScienceQuestionCount(),
-                request.getHistoryQuestionCount(),
-                request.getRelegionQuestionCount(),
-                request.getForeignLanguageQuestionCount(),
-                true
-        );
-        return ResponseEntity.ok(exam);
-    }
-
-    @GetMapping("/exams")
-    public ResponseEntity<List<Exam>> getAllExams() {
-        List<Exam> exams = examService.getAllExams();
-        return ResponseEntity.ok(exams);
-    }
-
-    @PutMapping("/exams/{examId}/activate")
-    public ResponseEntity<Exam> activateExam(@PathVariable Long examId) {
-        try {
-            Exam updatedExam = examService.activateExam(examId);
-            return ResponseEntity.ok(updatedExam);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @PutMapping("/exams/{examId}/deactivate")
-    public ResponseEntity<Exam> deactivateExam(@PathVariable Long examId) {
-        try {
-            Exam updatedExam = examService.deactivateExam(examId);
-            return ResponseEntity.ok(updatedExam);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
 }

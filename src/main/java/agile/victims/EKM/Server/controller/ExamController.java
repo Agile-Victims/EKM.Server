@@ -3,6 +3,7 @@ package agile.victims.EKM.Server.controller;
 import agile.victims.EKM.Server.dto.ExamCompletionDTO;
 import agile.victims.EKM.Server.entity.Exam;
 import agile.victims.EKM.Server.entity.ExamCompletion;
+import agile.victims.EKM.Server.requests.CreateExamRequest;
 import agile.victims.EKM.Server.responses.ExamResult;
 import agile.victims.EKM.Server.service.ExamCompletionService;
 import agile.victims.EKM.Server.service.ExamService;
@@ -114,8 +115,8 @@ public class ExamController {
         }
     }
 
-    @GetMapping("/studentCompletedExams")
-    public ResponseEntity<?> getStudentCompletedExams(@RequestParam String email) {
+    @GetMapping("/studentCompletedExams/{email}")
+    public ResponseEntity<?> getStudentCompletedExams(@PathVariable String email) {
         try {
             if (email == null || email.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Email adresi boş olamaz");
@@ -130,6 +131,31 @@ public class ExamController {
             return ResponseEntity.ok(examIds);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/createExam")
+    public ResponseEntity<Exam> createExam(@RequestBody CreateExamRequest request) {
+        Exam exam = examService.createExam(
+                request.getExamName(),
+                request.getTurkishQuestionCount(),
+                request.getMathQuestionCount(),
+                request.getScienceQuestionCount(),
+                request.getHistoryQuestionCount(),
+                request.getRelegionQuestionCount(),
+                request.getForeignLanguageQuestionCount(),
+                true
+        );
+        return ResponseEntity.ok(exam);
+    }
+
+    @PutMapping("/deactivateExam/{examId}")
+    public ResponseEntity<Exam> deactivateExam(@PathVariable Long examId) {
+        try {
+            Exam updatedExam = examService.deactivateExam(examId);
+            return ResponseEntity.ok(updatedExam);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }
