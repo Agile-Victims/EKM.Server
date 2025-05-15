@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/webApi/exams")
@@ -56,6 +58,76 @@ public class ExamController {
         try {
             ExamCompletion completion = examCompletionService.markExamAsCompleted(examCompletionForm);
             return ResponseEntity.ok(completion);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/examNet/{examCompletionId}")
+    public ResponseEntity<?> getExamNets(@PathVariable Long examCompletionId) {
+        try {
+            ExamCompletion completion = examCompletionService.getExamCompletionById(examCompletionId);
+            if (completion == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Map<String, Double> nets = new HashMap<>();
+            nets.put("turkishNet", examCompletionService.calculateTurkishNet(completion));
+            nets.put("mathNet", examCompletionService.calculateMathNet(completion));
+            nets.put("scienceNet", examCompletionService.calculateScienceNet(completion));
+            nets.put("historyNet", examCompletionService.calculateHistoryNet(completion));
+            nets.put("religionNet", examCompletionService.calculateReligionNet(completion));
+            nets.put("foreignLanguageNet", examCompletionService.calculateForeignLanguageNet(completion));
+
+            return ResponseEntity.ok(nets);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/studentExamNets")
+    public ResponseEntity<?> getStudentExamNets(
+            @RequestParam String email,
+            @RequestParam Long examId) {
+        try {
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email adresi boş olamaz");
+            }
+            if (examId == null) {
+                return ResponseEntity.badRequest().body("Sınav ID'si boş olamaz");
+            }
+
+            ExamCompletion completion = examCompletionService.getStudentExamNets(email, examId);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("turkishNet", completion.getTurkishNet());
+            response.put("mathNet", completion.getMathNet());
+            response.put("scienceNet", completion.getScienceNet());
+            response.put("historyNet", completion.getHistoryNet());
+            response.put("religionNet", completion.getReligionNet());
+            response.put("foreignLanguageNet", completion.getForeignLanguageNet());
+            response.put("completionDate", completion.getCompletionDate());
+
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/studentCompletedExams")
+    public ResponseEntity<?> getStudentCompletedExams(@RequestParam String email) {
+        try {
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email adresi boş olamaz");
+            }
+
+            List<Long> examIds = examCompletionService.getStudentCompletedExamIds(email);
+            
+            if (examIds.isEmpty()) {
+                return ResponseEntity.ok("Bu öğrenci henüz hiç sınav tamamlamamış.");
+            }
+
+            return ResponseEntity.ok(examIds);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

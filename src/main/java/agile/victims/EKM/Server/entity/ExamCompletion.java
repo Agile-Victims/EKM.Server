@@ -69,6 +69,24 @@ public class ExamCompletion {
     @Column(name = "foreign_language_wrong_count", nullable = false)
     private int foreignLanguageWrongCount;
 
+    @Column(name = "turkish_net")
+    private double turkishNet;
+
+    @Column(name = "math_net")
+    private double mathNet;
+
+    @Column(name = "science_net")
+    private double scienceNet;
+
+    @Column(name = "history_net")
+    private double historyNet;
+
+    @Column(name = "religion_net")
+    private double religionNet;
+
+    @Column(name = "foreign_language_net")
+    private double foreignLanguageNet;
+
     @Column(name = "completion_date")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date completionDate;
