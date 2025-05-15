@@ -2,7 +2,9 @@ package agile.victims.EKM.Server.service;
 
 import agile.victims.EKM.Server.entity.Exam;
 import agile.victims.EKM.Server.entity.ExamCompletion;
+import agile.victims.EKM.Server.entity.Student;
 import agile.victims.EKM.Server.repository.ExamRepository;
+import agile.victims.EKM.Server.repository.StudentRepository;
 import agile.victims.EKM.Server.responses.ExamResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,15 +12,17 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ExamService {
     @Autowired
     private ExamRepository examRepository;
-
+    @Autowired
+    private StudentRepository studentRepository;
 
     public Exam createExam(String examName, int turkishQuestionCount, int mathQuestionCount,
-                          int scienceQuestionCount, int historyQuestionCount, int relegionQuestionCount,
+                          int scienceQuestionCount, int historyQuestionCount, int religionQuestionCount,
                           int foreignLanguageQuestionCount, boolean isActive) {
         Exam exam = new Exam();
         exam.setExamName(examName);
@@ -26,7 +30,7 @@ public class ExamService {
         exam.setMathQuestionCount(mathQuestionCount);
         exam.setScienceQuestionCount(scienceQuestionCount);
         exam.setHistoryQuestionCount(historyQuestionCount);
-        exam.setRelegionQuestionCount(relegionQuestionCount);
+        exam.setReligionQuestionCount(religionQuestionCount);
         exam.setForeignLanguageQuestionCount(foreignLanguageQuestionCount);
         exam.setActive(isActive);
         
@@ -62,14 +66,18 @@ public class ExamService {
     }
 
     private Double calculateNet(ExamCompletion exam) {
-        double turkishNet = exam.getTurkishCorrectCount() - (exam.getTurkishWrongCount() / 3.0);
-        double mathNet = exam.getMathCorrectCount() - (exam.getMathWrongCount() / 3.0);
-        double scienceNet = exam.getScienceCorrectCount() - (exam.getScienceWrongCount() / 3.0);
-        double historyNet = exam.getHistoryCorrectCount() - (exam.getHistoryWrongCount() / 3.0);
-        double religionNet = exam.getReligionCorrectCount() - (exam.getReligionWrongCount() / 3.0);
-        double languageNet = exam.getForeignLanguageCorrectCount() - (exam.getForeignLanguageWrongCount() / 3.0);
+        double turkishNet = exam.getTurkishCorrectCount() - (exam.getTurkishWrongCount() / 4.0);
+        double mathNet = exam.getMathCorrectCount() - (exam.getMathWrongCount() / 4.0);
+        double scienceNet = exam.getScienceCorrectCount() - (exam.getScienceWrongCount() / 4.0);
+        double historyNet = exam.getHistoryCorrectCount() - (exam.getHistoryWrongCount() / 4.0);
+        double religionNet = exam.getReligionCorrectCount() - (exam.getReligionWrongCount() / 4.0);
+        double languageNet = exam.getForeignLanguageCorrectCount() - (exam.getForeignLanguageWrongCount() / 4.0);
 
         return turkishNet + mathNet + scienceNet + historyNet + religionNet + languageNet;
+    }
+
+    private Double calculateNet(int correctCount, int wrongCount) {
+        return (double) correctCount - (wrongCount / 4.0);
     }
 
 
@@ -79,30 +87,21 @@ public class ExamService {
 
         for (Map<String, Object> map : queryResult) {
             ExamResult examResult = new ExamResult();
+            examResult.studentId = ((Number) map.get("studentId")).longValue();
+            Optional<Student> student = studentRepository.findById(examResult.getStudentId());
+            if(student.isEmpty()){
+                return null;
+            }
 
-            examResult.studentId = ((Number) map.get("student_id")).longValue();
-            examResult.studentName = (String) map.get("name");
-            examResult.studentSurname = (String) map.get("surname");
-            examResult.studentEmail = (String) map.get("email");
-
-            // ExamCompletion benzeri alanlardan net hesapla:
-            ExamCompletion temp = new ExamCompletion();
-            temp.setTurkishCorrectCount(((Number) map.get("turkish_correct_count")).intValue());
-            temp.setTurkishWrongCount(((Number) map.get("turkish_wrong_count")).intValue());
-            temp.setMathCorrectCount(((Number) map.get("math_correct_count")).intValue());
-            temp.setMathWrongCount(((Number) map.get("math_wrong_count")).intValue());
-            temp.setScienceCorrectCount(((Number) map.get("science_correct_count")).intValue());
-            temp.setScienceWrongCount(((Number) map.get("science_wrong_count")).intValue());
-            temp.setHistoryCorrectCount(((Number) map.get("history_correct_count")).intValue());
-            temp.setHistoryWrongCount(((Number) map.get("history_wrong_count")).intValue());
-            temp.setReligionCorrectCount(((Number) map.get("religion_correct_count")).intValue());
-            temp.setReligionWrongCount(((Number) map.get("religion_wrong_count")).intValue());
-            temp.setForeignLanguageCorrectCount(((Number) map.get("foreign_language_correct_count")).intValue());
-            temp.setForeignLanguageWrongCount(((Number) map.get("foreign_language_wrong_count")).intValue());
-
-            examResult.net = calculateNet(temp);
-            examResult.completed = true;
-
+            examResult.studentName = student.get().getName();
+            examResult.studentSurname = student.get().getSurname();
+            examResult.studentEmail = student.get().getEmail();
+            examResult.setTurkishNet(calculateNet(((Number) map.get("turkish_correct_count")).intValue(), ((Number) map.get("turkish_correct_count")).intValue()));
+            examResult.setMathNet(calculateNet(((Number) map.get("math_correct_count")).intValue(), ((Number) map.get("math_correct_count")).intValue()));
+            examResult.setScienceNet(calculateNet(((Number) map.get("science_correct_count")).intValue(), ((Number) map.get("science_correct_count")).intValue()));
+            examResult.setHistoryNet(calculateNet(((Number) map.get("history_correct_count")).intValue(), ((Number) map.get("history_correct_count")).intValue()));
+            examResult.setReligionNet(calculateNet(((Number) map.get("religion_correct_count")).intValue(), ((Number) map.get("religion_correct_count")).intValue()));
+            examResult.setForeignLanguageNet(calculateNet(((Number) map.get("foreign_language_correct_count")).intValue(), ((Number) map.get("foreign_language_correct_count")).intValue()));
             results.add(examResult);
         }
         return results;

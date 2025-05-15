@@ -11,6 +11,6 @@ public class CreateExamRequest {
     private int mathQuestionCount;
     private int scienceQuestionCount;
     private int historyQuestionCount;
-    private int relegionQuestionCount;
+    private int religionQuestionCount;
     private int foreignLanguageQuestionCount;
 }

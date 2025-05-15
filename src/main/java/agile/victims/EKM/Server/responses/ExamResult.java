@@ -9,6 +9,10 @@ public class ExamResult {
     public String studentName;
     public String studentSurname;
     public String studentEmail;
-    public Double net;
-    public Boolean completed;
+    public Double turkishNet;
+    public Double mathNet;
+    public Double scienceNet;
+    public Double historyNet;
+    public Double religionNet;
+    public Double foreignLanguageNet;
 }

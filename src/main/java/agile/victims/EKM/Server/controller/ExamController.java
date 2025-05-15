@@ -142,7 +142,7 @@ public class ExamController {
                 request.getMathQuestionCount(),
                 request.getScienceQuestionCount(),
                 request.getHistoryQuestionCount(),
-                request.getRelegionQuestionCount(),
+                request.getReligionQuestionCount(),
                 request.getForeignLanguageQuestionCount(),
                 true
         );
