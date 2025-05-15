@@ -63,14 +63,6 @@ public class ExamCompletionService {
         completion.setForeignLanguageCorrectCount(examCompletionForm.getForeignLanguageCorrectCount());
         completion.setForeignLanguageWrongCount(examCompletionForm.getForeignLanguageWrongCount());
 
-        // Net değerlerini hesapla
-        completion.setTurkishNet(calculateTurkishNet(completion));
-        completion.setMathNet(calculateMathNet(completion));
-        completion.setScienceNet(calculateScienceNet(completion));
-        completion.setHistoryNet(calculateHistoryNet(completion));
-        completion.setReligionNet(calculateReligionNet(completion));
-        completion.setForeignLanguageNet(calculateForeignLanguageNet(completion));
-
         completion.setCompletionDate(new Date());
         
         return examCompletionRepository.save(completion);

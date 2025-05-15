@@ -101,12 +101,12 @@ public class ExamController {
             ExamCompletion completion = examCompletionService.getStudentExamNets(email, examId);
             
             Map<String, Object> response = new HashMap<>();
-            response.put("turkishNet", completion.getTurkishNet());
-            response.put("mathNet", completion.getMathNet());
-            response.put("scienceNet", completion.getScienceNet());
-            response.put("historyNet", completion.getHistoryNet());
-            response.put("religionNet", completion.getReligionNet());
-            response.put("foreignLanguageNet", completion.getForeignLanguageNet());
+            response.put("turkishNet", examCompletionService.calculateTurkishNet(completion));
+            response.put("mathNet", examCompletionService.calculateMathNet(completion));
+            response.put("scienceNet", examCompletionService.calculateScienceNet(completion));
+            response.put("historyNet", examCompletionService.calculateHistoryNet(completion));
+            response.put("religionNet", examCompletionService.calculateReligionNet(completion));
+            response.put("foreignLanguageNet", examCompletionService.calculateForeignLanguageNet(completion));
             response.put("completionDate", completion.getCompletionDate());
 
             return ResponseEntity.ok(response);
