@@ -3,6 +3,7 @@ package agile.victims.EKM.Server.service;
 import agile.victims.EKM.Server.entity.Exam;
 import agile.victims.EKM.Server.entity.ExamCompletion;
 import agile.victims.EKM.Server.entity.Student;
+import agile.victims.EKM.Server.repository.ExamCompletionRepository;
 import agile.victims.EKM.Server.repository.ExamRepository;
 import agile.victims.EKM.Server.repository.StudentRepository;
 import agile.victims.EKM.Server.responses.ExamResult;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ExamService {
@@ -20,10 +22,14 @@ public class ExamService {
     private ExamRepository examRepository;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private ExamCompletionRepository examCompletionRepository;
 
     public Exam createExam(String examName, int turkishQuestionCount, int mathQuestionCount,
                           int scienceQuestionCount, int historyQuestionCount, int religionQuestionCount,
-                          int foreignLanguageQuestionCount, boolean isActive) {
+                          int foreignLanguageQuestionCount, String turkishSubjects, String mathSubjects,
+                          String scienceSubjects, String historySubjects, String religionSubjects,
+                          String foreignLanguageSubjects, boolean isActive) {
         Exam exam = new Exam();
         exam.setExamName(examName);
         exam.setTurkishQuestionCount(turkishQuestionCount);
@@ -32,6 +38,12 @@ public class ExamService {
         exam.setHistoryQuestionCount(historyQuestionCount);
         exam.setReligionQuestionCount(religionQuestionCount);
         exam.setForeignLanguageQuestionCount(foreignLanguageQuestionCount);
+        exam.setTurkishSubjects(turkishSubjects);
+        exam.setMathSubjects(mathSubjects);
+        exam.setScienceSubjects(scienceSubjects);
+        exam.setHistorySubjects(historySubjects);
+        exam.setReligionSubjects(religionSubjects);
+        exam.setForeignLanguageSubjects(foreignLanguageSubjects);
         exam.setActive(isActive);
         
 
@@ -82,30 +94,45 @@ public class ExamService {
 
 
     public List<ExamResult> getExamResult(Long examId) {
-        List<ExamResult> results = new ArrayList<>();
-        List<Map<String, Object>> queryResult = examRepository.findExamCompletionsByExamId(examId);
-
-        for (Map<String, Object> map : queryResult) {
-            ExamResult examResult = new ExamResult();
-            examResult.studentId = ((Number) map.get("studentId")).longValue();
-            Optional<Student> student = studentRepository.findById(examResult.getStudentId());
-            if(student.isEmpty()){
-                return null;
-            }
-
-            examResult.studentName = student.get().getName();
-            examResult.studentSurname = student.get().getSurname();
-            examResult.studentEmail = student.get().getEmail();
-            examResult.setTurkishNet(calculateNet(((Number) map.get("turkish_correct_count")).intValue(), ((Number) map.get("turkish_correct_count")).intValue()));
-            examResult.setMathNet(calculateNet(((Number) map.get("math_correct_count")).intValue(), ((Number) map.get("math_correct_count")).intValue()));
-            examResult.setScienceNet(calculateNet(((Number) map.get("science_correct_count")).intValue(), ((Number) map.get("science_correct_count")).intValue()));
-            examResult.setHistoryNet(calculateNet(((Number) map.get("history_correct_count")).intValue(), ((Number) map.get("history_correct_count")).intValue()));
-            examResult.setReligionNet(calculateNet(((Number) map.get("religion_correct_count")).intValue(), ((Number) map.get("religion_correct_count")).intValue()));
-            examResult.setForeignLanguageNet(calculateNet(((Number) map.get("foreign_language_correct_count")).intValue(), ((Number) map.get("foreign_language_correct_count")).intValue()));
-            results.add(examResult);
-        }
-        return results;
+        List<ExamCompletion> completions = examCompletionRepository.findByExamId(examId);
+        return completions.stream()
+                .map(completion -> {
+                    ExamResult result = new ExamResult();
+                    Student student = studentRepository.findById(completion.getStudentId())
+                            .orElseThrow(() -> new RuntimeException("Student not found"));
+                    result.setStudentEmail(student.getEmail());
+                    result.setTurkishNet(calculateTurkishNet(completion));
+                    result.setMathNet(calculateMathNet(completion));
+                    result.setScienceNet(calculateScienceNet(completion));
+                    result.setHistoryNet(calculateHistoryNet(completion));
+                    result.setReligionNet(calculateReligionNet(completion));
+                    result.setForeignLanguageNet(calculateForeignLanguageNet(completion));
+                    return result;
+                })
+                .collect(Collectors.toList());
     }
 
-    
+    private double calculateTurkishNet(ExamCompletion completion) {
+        return completion.getTurkishCorrectCount() - (completion.getTurkishWrongCount() * 0.25);
+    }
+
+    private double calculateMathNet(ExamCompletion completion) {
+        return completion.getMathCorrectCount() - (completion.getMathWrongCount() * 0.25);
+    }
+
+    private double calculateScienceNet(ExamCompletion completion) {
+        return completion.getScienceCorrectCount() - (completion.getScienceWrongCount() * 0.25);
+    }
+
+    private double calculateHistoryNet(ExamCompletion completion) {
+        return completion.getHistoryCorrectCount() - (completion.getHistoryWrongCount() * 0.25);
+    }
+
+    private double calculateReligionNet(ExamCompletion completion) {
+        return completion.getReligionCorrectCount() - (completion.getReligionWrongCount() * 0.25);
+    }
+
+    private double calculateForeignLanguageNet(ExamCompletion completion) {
+        return completion.getForeignLanguageCorrectCount() - (completion.getForeignLanguageWrongCount() * 0.25);
+    }
 } 
