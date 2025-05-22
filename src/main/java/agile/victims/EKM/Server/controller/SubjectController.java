@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/subjects")
+@RequestMapping("/webApi/subjects")
 public class SubjectController {
 
     @Autowired
     private SubjectRepository subjectRepository;
 
-    @GetMapping("/{lessonName}")
+    @GetMapping("/getSubjects/{lessonName}")
     public ResponseEntity<List<Subject>> getSubjects(@PathVariable String lessonName) {
         List<Subject> subjects = subjectRepository.findByLessonName(lessonName);
         return ResponseEntity.ok(subjects);
     }
 
-    @PostMapping
+    @PostMapping("/addSubject")
     public ResponseEntity<Subject> addSubject(@RequestBody SubjectDTO subjectDTO) {
         Subject subject = new Subject();
         subject.setLessonName(subjectDTO.getLessonName());
@@ -31,7 +31,7 @@ public class SubjectController {
         return ResponseEntity.ok(savedSubject);
     }
 
-    @DeleteMapping("/{lessonName}/{subjectName}")
+    @DeleteMapping("/deleteSubject/{lessonName}/{subjectName}")
     public ResponseEntity<Void> deleteSubject(@PathVariable String lessonName, @PathVariable String subjectName) {
         subjectRepository.deleteByLessonNameAndSubjectName(lessonName, subjectName);
         return ResponseEntity.ok().build();
