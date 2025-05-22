@@ -144,6 +144,12 @@ public class ExamController {
                 request.getHistoryQuestionCount(),
                 request.getReligionQuestionCount(),
                 request.getForeignLanguageQuestionCount(),
+                request.getTurkishSubjects(),
+                request.getMathSubjects(),
+                request.getScienceSubjects(),
+                request.getHistorySubjects(),
+                request.getReligionSubjects(),
+                request.getForeignLanguageSubjects(),
                 true
         );
         return ResponseEntity.ok(exam);

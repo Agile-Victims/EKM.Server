@@ -20,4 +20,22 @@ public class Exam {
     private int religionQuestionCount;
     private int foreignLanguageQuestionCount;
     private boolean isActive;
+    
+    @Column(columnDefinition = "TEXT")
+    private String turkishSubjects;
+    
+    @Column(columnDefinition = "TEXT")
+    private String mathSubjects;
+    
+    @Column(columnDefinition = "TEXT")
+    private String scienceSubjects;
+    
+    @Column(columnDefinition = "TEXT")
+    private String historySubjects;
+    
+    @Column(columnDefinition = "TEXT")
+    private String religionSubjects;
+    
+    @Column(columnDefinition = "TEXT")
+    private String foreignLanguageSubjects;
 } 

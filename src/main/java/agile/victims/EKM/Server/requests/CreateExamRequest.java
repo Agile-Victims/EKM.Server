@@ -1,10 +1,8 @@
 package agile.victims.EKM.Server.requests;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class CreateExamRequest {
     private String examName;
     private int turkishQuestionCount;
@@ -13,4 +11,10 @@ public class CreateExamRequest {
     private int historyQuestionCount;
     private int religionQuestionCount;
     private int foreignLanguageQuestionCount;
+    private String turkishSubjects;
+    private String mathSubjects;
+    private String scienceSubjects;
+    private String historySubjects;
+    private String religionSubjects;
+    private String foreignLanguageSubjects;
 }
