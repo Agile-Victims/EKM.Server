@@ -63,6 +63,19 @@ public class ExamCompletionService {
         completion.setForeignLanguageCorrectCount(examCompletionForm.getForeignLanguageCorrectCount());
         completion.setForeignLanguageWrongCount(examCompletionForm.getForeignLanguageWrongCount());
 
+        completion.setMathWrongSubjects(examCompletionForm.getMathWrongSubjects());
+        completion.setScienceWrongSubjects(examCompletionForm.getScienceWrongSubjects());
+        completion.setHistoryWrongSubjects(examCompletionForm.getHistoryWrongSubjects());
+        completion.setReligionWrongSubjects(examCompletionForm.getReligionWrongSubjects());
+        completion.setForeignLanguageWrongSubjects(examCompletionForm.getForeignLanguageWrongSubjects());
+
+        completion.setTurkishEmptySubjects(examCompletionForm.getTurkishEmptySubjects());
+        completion.setMathEmptySubjects(examCompletionForm.getMathEmptySubjects());
+        completion.setScienceEmptySubjects(examCompletionForm.getScienceEmptySubjects());
+        completion.setHistoryEmptySubjects(examCompletionForm.getHistoryEmptySubjects());
+        completion.setReligionEmptySubjects(examCompletionForm.getReligionEmptySubjects());
+        completion.setForeignLanguageEmptySubjects(examCompletionForm.getForeignLanguageEmptySubjects());
+
         completion.setCompletionDate(new Date());
         
         return examCompletionRepository.save(completion);
