@@ -72,4 +72,39 @@ public class ExamCompletion {
     @Column(name = "completion_date")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date completionDate;
+
+    @Column(name = "math_wrong_subjects", nullable = false)
+    private String mathWrongSubjects;
+
+    @Column(name = "science_wrong_subjects", nullable = false)
+    private String scienceWrongSubjects;
+
+    @Column(name = "history_wrong_subjects", nullable = false)
+    private String historyWrongSubjects;
+
+    @Column(name = "religion_wrong_subjects", nullable = false)
+    private String religionWrongSubjects;
+
+    @Column(name = "foreign_language_wrong_subjects", nullable = false)
+    private String foreignLanguageWrongSubjects;
+
+    @Column(name = "turkish_empty_subjects", nullable = false)
+    private String turkishEmptySubjects;
+
+    @Column(name = "math_empty_subjects", nullable = false)
+    private String mathEmptySubjects;
+
+    @Column(name = "science_empty_subjects", nullable = false)
+    private String scienceEmptySubjects;
+
+    @Column(name = "history_empty_subjects", nullable = false)
+    private String historyEmptySubjects;
+
+    @Column(name = "religion_empty_subjects", nullable = false)
+    private String religionEmptySubjects;
+
+    @Column(name = "foreign_language_empty_subjects", nullable = false)
+    private String foreignLanguageEmptySubjects;
+
+
 } 
