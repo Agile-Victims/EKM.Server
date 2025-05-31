@@ -63,6 +63,7 @@ public class ExamCompletionService {
         completion.setForeignLanguageCorrectCount(examCompletionForm.getForeignLanguageCorrectCount());
         completion.setForeignLanguageWrongCount(examCompletionForm.getForeignLanguageWrongCount());
 
+        completion.setTurkishWrongSubjects(examCompletionForm.getTurkishWrongSubjects());
         completion.setMathWrongSubjects(examCompletionForm.getMathWrongSubjects());
         completion.setScienceWrongSubjects(examCompletionForm.getScienceWrongSubjects());
         completion.setHistoryWrongSubjects(examCompletionForm.getHistoryWrongSubjects());
@@ -95,6 +96,10 @@ public class ExamCompletionService {
             throw new RuntimeException("Sınav bulunamadı: " + examId);
         }
         return examCompletionRepository.findByExamId(examId);
+    }
+
+    public ExamCompletion getDetailedExamResult(Long examId, Long studentId) {
+        return examCompletionRepository.findByExamIdAndStudentId(examId, studentId).orElse(null);
     }
 
     public ExamCompletion getExamCompletionById(Long id) {

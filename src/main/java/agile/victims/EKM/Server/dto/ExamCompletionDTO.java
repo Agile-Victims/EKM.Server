@@ -23,6 +23,7 @@ public class ExamCompletionDTO {
     private int historyWrongCount;
     private int religionWrongCount;
     private int foreignLanguageWrongCount;
+    private String turkishWrongSubjects;
     private String mathWrongSubjects;
     private String scienceWrongSubjects;
     private String historyWrongSubjects;

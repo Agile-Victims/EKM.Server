@@ -45,6 +45,15 @@ public class ExamController {
         return ResponseEntity.ok(exam);
     }
 
+    @GetMapping("/getDetailedResult/{examId}/{studentId}")
+    public ResponseEntity<?> getDetailedResult(@PathVariable Long examId, @PathVariable Long studentId) {
+        ExamCompletion examCompletion = examCompletionService.getDetailedExamResult(examId, studentId);
+        if(examCompletion == null){
+            return ResponseEntity.badRequest().body("Sonuç bulunamadı");
+        }
+        return ResponseEntity.ok(examCompletion);
+    }
+
     @GetMapping("/getAllExams")
     public ResponseEntity<?> getAllExams() {
          List<Exam> exams = examService.getAllExams();

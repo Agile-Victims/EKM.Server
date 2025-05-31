@@ -3,9 +3,11 @@ package agile.victims.EKM.Server.service;
 import agile.victims.EKM.Server.entity.Exam;
 import agile.victims.EKM.Server.entity.ExamCompletion;
 import agile.victims.EKM.Server.entity.Student;
+import agile.victims.EKM.Server.entity.User;
 import agile.victims.EKM.Server.repository.ExamCompletionRepository;
 import agile.victims.EKM.Server.repository.ExamRepository;
 import agile.victims.EKM.Server.repository.StudentRepository;
+import agile.victims.EKM.Server.repository.UserRepository;
 import agile.victims.EKM.Server.responses.ExamResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class ExamService {
     private ExamRepository examRepository;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private ExamCompletionRepository examCompletionRepository;
 
@@ -98,8 +102,11 @@ public class ExamService {
         return completions.stream()
                 .map(completion -> {
                     ExamResult result = new ExamResult();
-                    Student student = studentRepository.findById(completion.getStudentId())
+                    User student = userRepository.findById(completion.getStudentId())
                             .orElseThrow(() -> new RuntimeException("Student not found"));
+                    result.setStudentId(student.getId());
+                    result.setStudentName(student.getName());
+                    result.setStudentSurname(student.getSurname());
                     result.setStudentEmail(student.getEmail());
                     result.setTurkishNet(calculateTurkishNet(completion));
                     result.setMathNet(calculateMathNet(completion));

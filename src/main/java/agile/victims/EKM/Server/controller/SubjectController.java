@@ -1,6 +1,7 @@
 package agile.victims.EKM.Server.controller;
 
 import agile.victims.EKM.Server.dto.SubjectDTO;
+import agile.victims.EKM.Server.dto.SubjectDTO_V2;
 import agile.victims.EKM.Server.entity.Subject;
 import agile.victims.EKM.Server.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/webApi/subjects")
@@ -19,6 +21,17 @@ public class SubjectController {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    @GetMapping("/getAllSubjects")
+    public ResponseEntity<List<SubjectDTO_V2>> getAllSubjects() {
+        List<Subject> subjects = subjectRepository.findAll();
+
+        List<SubjectDTO_V2> dtoList = subjects.stream()
+                .map(s -> new SubjectDTO_V2(s.getId(), s.getSubjectName()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtoList);
+    }
 
     @GetMapping("/getSubjects/{lessonName}")
     public ResponseEntity<List<Subject>> getSubjects(@PathVariable String lessonName) {

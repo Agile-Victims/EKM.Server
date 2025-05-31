@@ -73,6 +73,9 @@ public class ExamCompletion {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date completionDate;
 
+    @Column(name = "turkish_wrong_subjects", nullable = false)
+    private String turkishWrongSubjects;
+
     @Column(name = "math_wrong_subjects", nullable = false)
     private String mathWrongSubjects;
 
